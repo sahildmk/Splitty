@@ -1,4 +1,5 @@
 import clientPromise from "@/lib/mongodb";
+import { Transaction } from "mongodb";
 
 export type WestpacTransaction = {
   _id?: any;
@@ -21,16 +22,14 @@ export const WestpacHeaders = [
   "Categories",
 ];
 
-// export async function GetSavedTransactions(): Promise<WestpacTransaction[]> {
-//   const client = await clientPromise;
+export async function GetSavedTransactions(): Promise<WestpacTransaction[]> {
+  const data: WestpacTransaction[] = await fetch("/api/transactions").then(
+    async (res) => {
+      return await res.json();
+    }
+  );
 
-//   const collection = await client
-//     .db("Splitty")
-//     .collection("Transactions")
-//     .aggregate()
-//     .toArray();
+  console.log(data);
 
-//   console.log(collection);
-
-//   return [];
-// }
+  return data;
+}

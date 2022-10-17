@@ -8,26 +8,25 @@ import {
   useState,
 } from "react";
 import ParseCSV from "@/utils/csv-parser";
-import { WestpacTransaction, WestpacHeaders } from "@/lib/transactions";
+import {
+  WestpacTransaction,
+  WestpacHeaders,
+  GetSavedTransactions,
+} from "@/lib/transactions";
+import { useQuery } from "@tanstack/react-query";
 
 const Home: NextPage = () => {
   const [transactions, setTransactions] = useState<WestpacTransaction[]>([]);
-
-  const getData = () => {
-    fetch("/api/transactions").then((res) => {
-      res.json().then((data) => {
-        console.log(data);
-      });
-    });
-  };
+  const { isLoading, error, data } = useQuery(
+    ["transactions"],
+    GetSavedTransactions
+  );
 
   useEffect(() => {
-    getData();
+    console.log(transactions);
+  }, [transactions]);
 
-    // return () => {
-    //   second;
-    // };
-  }, []);
+  if (isLoading) return <>Loading...</>;
 
   return (
     <div>
@@ -54,7 +53,7 @@ const Home: NextPage = () => {
           </form>
         </div>
 
-        {transactions.map((transaction, index) => (
+        {data?.map((transaction, index) => (
           <div
             key={index}
             className="flex border border-solid border-white my-4 px-3 py-4 hover:scale-[1.03] transition-all rounded-md hover:cursor-pointer max-w-xl"
@@ -86,6 +85,8 @@ function HandleFileOnChange(
       WestpacHeaders,
       (error: any, result: WestpacTransaction[]) => {
         if (error) console.error(error);
+
+        console.log(result);
 
         setTransactions((transactions) => [
           ...transactions,
