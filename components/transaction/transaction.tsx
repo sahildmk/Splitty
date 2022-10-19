@@ -6,7 +6,7 @@ interface TransactionProps {
   transaction: WestpacTransaction;
 }
 
-const Transaction: NextPage<TransactionProps> = ({ key, transaction }) => {
+const TransactionCard: NextPage<TransactionProps> = ({ key, transaction }) => {
   return (
     <div
       key={key}
@@ -22,4 +22,4 @@ const Transaction: NextPage<TransactionProps> = ({ key, transaction }) => {
   );
 };
 
-export default Transaction;
+export default TransactionCard;

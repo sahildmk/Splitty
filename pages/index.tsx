@@ -10,7 +10,7 @@ import {
 import ParseCSV from "@/utils/csv-parser";
 
 import { useQuery } from "@tanstack/react-query";
-import Transaction from "@/components/transaction/transaction";
+import TransactionCard from "@/components/transaction/transaction";
 import { GetSavedTransactions } from "@/lib/api/transactions";
 import { WestpacTransaction, WestpacHeaders } from "@/lib/api/transactions";
 
@@ -49,7 +49,7 @@ const Home: NextPage = () => {
         </div>
 
         {data?.map((transaction, index) => (
-          <Transaction key={index} transaction={transaction} />
+          <TransactionCard key={index} transaction={transaction} />
         ))}
       </main>
 
