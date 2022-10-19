@@ -1,18 +1,26 @@
-import clientPromise from "@/lib/mongodb";
-import { WestpacTransaction } from "@/lib/transactions";
+import clientPromise from "@/utils/mongodb";
+import { GetAllTransactions } from "@/utils/transactions";
 import type { NextApiRequest, NextApiResponse } from "next";
 
 export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse<any>
 ) {
-  const client = await clientPromise;
+  const { method } = req;
 
-  const collection = await client
-    .db("Splitty")
-    .collection("Transactions")
-    .aggregate()
-    .toArray();
+  let response: any;
 
-  res.status(200).json(collection);
+  switch (method) {
+    case "GET":
+      response = await GetAllTransactions();
+      break;
+
+    case "POST":
+      break;
+
+    default:
+      break;
+  }
+
+  res.status(200).json(response);
 }

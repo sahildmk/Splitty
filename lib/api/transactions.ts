@@ -1,6 +1,3 @@
-import clientPromise from "@/lib/mongodb";
-import { Transaction } from "mongodb";
-
 export type WestpacTransaction = {
   _id?: any;
   BankAccount: number;

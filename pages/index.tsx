@@ -8,12 +8,11 @@ import {
   useState,
 } from "react";
 import ParseCSV from "@/utils/csv-parser";
-import {
-  WestpacTransaction,
-  WestpacHeaders,
-  GetSavedTransactions,
-} from "@/lib/transactions";
+
 import { useQuery } from "@tanstack/react-query";
+import Transaction from "@/components/transaction/transaction";
+import { GetSavedTransactions } from "@/lib/api/transactions";
+import { WestpacTransaction, WestpacHeaders } from "@/lib/api/transactions";
 
 const Home: NextPage = () => {
   const [transactions, setTransactions] = useState<WestpacTransaction[]>([]);
@@ -21,10 +20,6 @@ const Home: NextPage = () => {
     ["transactions"],
     GetSavedTransactions
   );
-
-  useEffect(() => {
-    console.log(transactions);
-  }, [transactions]);
 
   if (isLoading) return <>Loading...</>;
 
@@ -47,24 +42,14 @@ const Home: NextPage = () => {
               id="file"
               name="filename"
               onChange={(e) => {
-                HandleFileOnChange(e, setTransactions);
+                HandleUploadFile(e, setTransactions);
               }}
             />
           </form>
         </div>
 
         {data?.map((transaction, index) => (
-          <div
-            key={index}
-            className="flex border border-solid border-white my-4 px-3 py-4 hover:scale-[1.03] transition-all rounded-md hover:cursor-pointer max-w-xl"
-          >
-            <div>{transaction.Date.toString()}</div>
-            <div className="ml-5">{transaction.Description}</div>
-            <div className="ml-auto">
-              $ <span className="text-red-500">{transaction.DebitAmount}</span>
-              <span className="text-green-500">{transaction.CreditAmount}</span>
-            </div>
-          </div>
+          <Transaction key={index} transaction={transaction} />
         ))}
       </main>
 
@@ -75,7 +60,7 @@ const Home: NextPage = () => {
 
 export default Home;
 
-function HandleFileOnChange(
+function HandleUploadFile(
   e: ChangeEvent<HTMLInputElement>,
   setTransactions: Dispatch<SetStateAction<WestpacTransaction[]>>
 ) {
