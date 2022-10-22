@@ -1,12 +1,16 @@
 import clientPromise from "@/utils/mongodb";
-import { GetAllTransactions } from "@/utils/transactions";
+import {
+  AddTransactions,
+  DeleteAllTransactions,
+  GetAllTransactions,
+} from "@/utils/transactions/transactionsRepository";
 import type { NextApiRequest, NextApiResponse } from "next";
 
 export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse<any>
 ) {
-  const { method } = req;
+  const { method, body } = req;
 
   let response: any;
 
@@ -16,6 +20,11 @@ export default async function handler(
       break;
 
     case "POST":
+      if (body.length == 0) DeleteAllTransactions();
+      else AddTransactions(body);
+
+      response = [];
+
       break;
 
     default:

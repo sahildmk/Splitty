@@ -1,28 +1,8 @@
 import type { NextPage } from "next";
 import Head from "next/head";
-import {
-  ChangeEvent,
-  Dispatch,
-  SetStateAction,
-  useEffect,
-  useState,
-} from "react";
-import ParseCSV from "@/utils/csv-parser";
-
-import { useQuery } from "@tanstack/react-query";
-import TransactionCard from "@/components/transaction/transaction";
-import { GetSavedTransactions } from "@/lib/api/transactions";
-import { WestpacTransaction, WestpacHeaders } from "@/lib/api/transactions";
+import Link from "next/link";
 
 const Home: NextPage = () => {
-  const [transactions, setTransactions] = useState<WestpacTransaction[]>([]);
-  const { isLoading, error, data } = useQuery(
-    ["transactions"],
-    GetSavedTransactions
-  );
-
-  if (isLoading) return <>Loading...</>;
-
   return (
     <div>
       <Head>
@@ -31,53 +11,16 @@ const Home: NextPage = () => {
         <link rel="icon" href="/favicon.ico" />
       </Head>
 
-      <main className="m-10">
-        <h1 className="text-4xl font-bold">Splitty</h1>
-        <div className="my-5">
-          <h1 className="text-2xl font-bold">Import file:</h1>
-          <form>
-            <input
-              type={"file"}
-              className="text-white mt-3"
-              id="file"
-              name="filename"
-              onChange={(e) => {
-                HandleUploadFile(e, setTransactions);
-              }}
-            />
-          </form>
-        </div>
-
-        {data?.map((transaction, index) => (
-          <TransactionCard key={index} transaction={transaction} />
-        ))}
+      <main className="flex flex-col justify-center items-center h-screen">
+        <h1 className="text-6xl font-bold pb-14">Splitty</h1>
+        <Link href={"/transactions"}>
+          <div className="text-xl font-bold hover:cursor-pointer hover:scale-105 transition-all dark:text-slate-700 dark:bg-slate-200 px-5 py-3 rounded-md">
+            View Transactions
+          </div>
+        </Link>
       </main>
-
-      <footer></footer>
     </div>
   );
 };
 
 export default Home;
-
-function HandleUploadFile(
-  e: ChangeEvent<HTMLInputElement>,
-  setTransactions: Dispatch<SetStateAction<WestpacTransaction[]>>
-) {
-  if (e.target.files) {
-    ParseCSV<WestpacTransaction>(
-      e.target.files[0],
-      WestpacHeaders,
-      (error: any, result: WestpacTransaction[]) => {
-        if (error) console.error(error);
-
-        console.log(result);
-
-        setTransactions((transactions) => [
-          ...transactions,
-          ...result.splice(1),
-        ]);
-      }
-    );
-  }
-}

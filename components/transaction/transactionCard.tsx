@@ -1,4 +1,4 @@
-import { WestpacTransaction } from "@/lib/api/transactions";
+import { WestpacTransaction } from "@/utils/transactions/transactionsController";
 import { NextPage } from "next";
 
 interface TransactionProps {
@@ -15,7 +15,7 @@ const TransactionCard: NextPage<TransactionProps> = ({ key, transaction }) => {
       <div>{transaction.Date.toString()}</div>
       <div className="ml-5">{transaction.Description}</div>
       <div className="ml-auto">
-        $ <span className="text-red-500">{transaction.DebitAmount}</span>
+        $<span className="text-red-500">{transaction.DebitAmount}</span>
         <span className="text-green-500">{transaction.CreditAmount}</span>
       </div>
     </div>
