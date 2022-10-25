@@ -27,9 +27,6 @@ export async function GetSavedTransactions(): Promise<WestpacTransaction[]> {
       return await res.json();
     }
   );
-
-  console.log(data);
-
   return data;
 }
 

@@ -26,6 +26,8 @@ export async function DeleteAllTransactions() {
   const client = await clientPromise;
 
   await TransactionsCollection(client).deleteMany({});
+
+  return await GetAllTransactions();
 }
 
 function TransactionsCollection(client: MongoClient) {

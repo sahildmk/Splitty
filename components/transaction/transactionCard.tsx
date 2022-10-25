@@ -2,16 +2,12 @@ import { WestpacTransaction } from "@/utils/transactions/transactionsController"
 import { NextPage } from "next";
 
 interface TransactionProps {
-  key: any;
   transaction: WestpacTransaction;
 }
 
-const TransactionCard: NextPage<TransactionProps> = ({ key, transaction }) => {
+const TransactionCard: NextPage<TransactionProps> = ({ transaction }) => {
   return (
-    <div
-      key={key}
-      className="flex border border-solid border-white my-4 px-3 py-4 hover:scale-[1.03] transition-all rounded-md hover:cursor-pointer max-w-xl"
-    >
+    <div className="flex border border-solid border-white my-4 px-3 py-4 hover:scale-[1.03] transition-all rounded-md hover:cursor-pointer max-w-xl">
       <div>{transaction.Date.toString()}</div>
       <div className="ml-5">{transaction.Description}</div>
       <div className="ml-auto">

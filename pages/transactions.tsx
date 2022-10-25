@@ -9,7 +9,12 @@ import {
 } from "react";
 import ParseCSV from "@/utils/csv-parser";
 
-import { useQuery } from "@tanstack/react-query";
+import {
+  useMutation,
+  UseMutationResult,
+  useQuery,
+  useQueryClient,
+} from "@tanstack/react-query";
 import TransactionCard from "@/components/transaction/transactionCard";
 import {
   GetSavedTransactions,
@@ -20,13 +25,23 @@ import {
 } from "@/utils/transactions/transactionsController";
 
 const TransactionsPage: NextPage = () => {
-  const [transactions, setTransactions] = useState<WestpacTransaction[]>([]);
-  const { isLoading, error, data, refetch } = useQuery(
+  const queryClient = useQueryClient();
+
+  const mutation = useMutation(UploadTransactions, {
+    onSuccess: (data) => {
+      queryClient.setQueryData(["transactions"], data);
+    },
+  });
+
+  const { isLoading, data, isFetching } = useQuery(
     ["transactions"],
-    GetSavedTransactions
+    GetSavedTransactions,
+    { refetchOnWindowFocus: false }
   );
 
   if (isLoading) return <>Loading...</>;
+
+  // if (isFetching || isRefetching) return <>Fetching...</>;
 
   return (
     <div>
@@ -47,7 +62,7 @@ const TransactionsPage: NextPage = () => {
               id="file"
               name="filename"
               onChange={(e) => {
-                HandleUploadFile(e, refetch);
+                HandleUploadFile(e, mutation);
               }}
             />
           </form>
@@ -55,16 +70,19 @@ const TransactionsPage: NextPage = () => {
 
         <button
           onClick={() => {
-            DeleteAllTransactions();
-            refetch();
+            mutation.mutate([]);
           }}
         >
           Delete current transactions
         </button>
 
-        {data?.map((transaction, index) => (
-          <TransactionCard key={index} transaction={transaction} />
-        ))}
+        {isLoading || isFetching ? (
+          <>Loading...</>
+        ) : (
+          data?.map((transaction, index) => (
+            <TransactionCard key={index} transaction={transaction} />
+          ))
+        )}
       </main>
 
       <footer></footer>
@@ -76,18 +94,18 @@ export default TransactionsPage;
 
 async function HandleUploadFile(
   e: ChangeEvent<HTMLInputElement>,
-  refetch: any
+  mutation: UseMutationResult<
+    WestpacTransaction[],
+    unknown,
+    WestpacTransaction[],
+    unknown
+  >
 ) {
-  if (e.target.files) {
-    ParseCSV<WestpacTransaction>(
+  if (e.target.files && e.target.files.length === 1) {
+    let transactions = await ParseCSV<WestpacTransaction>(
       e.target.files[0],
-      WestpacHeaders,
-      async (error: any, result: WestpacTransaction[]) => {
-        if (error) console.error(error);
-
-        await UploadTransactions(result.slice(1));
-        refetch();
-      }
+      WestpacHeaders
     );
+    mutation.mutate(transactions);
   }
 }

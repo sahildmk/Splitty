@@ -1,4 +1,4 @@
-import * as csv from "csv-parse";
+import * as csv from "csv-parse/sync";
 
 const wordsToStrip = [
   "EFTPOS CREDIT",
@@ -13,32 +13,30 @@ const wordsToStrip = [
 
 export default async function ParseCSV<T>(
   file: File,
-  headers: string[],
-  callback: (error: any, result: T[]) => void
+  headers: string[]
+  // callback: (error: any, result: T[]) => Promise<void>
 ): Promise<T[]> {
   var fileString = await file.text();
 
-  let records: T[] = [];
+  // let records: T[] = [];
 
-  csv.parse(
-    fileString,
-    {
-      delimiter: ",",
-      columns: headers,
-      cast: (columnValue, context) => {
-        if (context.column === "Description") {
-          wordsToStrip.forEach((word) => {
-            if (columnValue.startsWith(word)) {
-              columnValue = columnValue.replace(word, "");
-            }
-          });
-        }
+  let records: T[] = csv.parse(fileString, {
+    delimiter: ",",
+    columns: headers,
+    cast: (columnValue, context) => {
+      if (context.column === "Description") {
+        wordsToStrip.forEach((word) => {
+          if (columnValue.startsWith(word)) {
+            columnValue = columnValue.replace(word, "");
+          }
+        });
+      }
 
-        return columnValue;
-      },
+      return columnValue;
     },
-    callback
-  );
+  });
+
+  records = records.slice(1);
 
   return records;
 }

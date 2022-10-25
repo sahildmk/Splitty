@@ -20,11 +20,11 @@ export default async function handler(
       break;
 
     case "POST":
-      if (body.length == 0) DeleteAllTransactions();
-      else AddTransactions(body);
-
-      response = [];
-
+      if (body.length == 0) {
+        response = await DeleteAllTransactions();
+      } else {
+        response = await AddTransactions(body);
+      }
       break;
 
     default:
