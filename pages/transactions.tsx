@@ -27,7 +27,13 @@ import {
 const TransactionsPage: NextPage = () => {
   const queryClient = useQueryClient();
 
-  const mutation = useMutation(UploadTransactions, {
+  const uploadTransactionsMut = useMutation(UploadTransactions, {
+    onSuccess: (data) => {
+      queryClient.setQueryData(["transactions"], data);
+    },
+  });
+
+  const deleteTransactionsMut = useMutation(DeleteAllTransactions, {
     onSuccess: (data) => {
       queryClient.setQueryData(["transactions"], data);
     },
@@ -62,17 +68,13 @@ const TransactionsPage: NextPage = () => {
               id="file"
               name="filename"
               onChange={(e) => {
-                HandleUploadFile(e, mutation);
+                HandleUploadFile(e, uploadTransactionsMut);
               }}
             />
           </form>
         </div>
 
-        <button
-          onClick={() => {
-            mutation.mutate([]);
-          }}
-        >
+        <button onClick={() => deleteTransactionsMut.mutate()}>
           Delete current transactions
         </button>
 
