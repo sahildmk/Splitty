@@ -18,11 +18,13 @@ import {
 import TransactionCard from "@/components/transaction/transactionCard";
 import {
   GetSavedTransactions,
-  WestpacTransaction,
-  WestpacHeaders,
   UploadTransactions,
   DeleteAllTransactions,
 } from "@/utils/transactions/transactionsController";
+import {
+  WestpacTransaction,
+  WestpacHeaders,
+} from "@/utils/transactions/transactionDomainModels";
 
 const TransactionsPage: NextPage = () => {
   const queryClient = useQueryClient();

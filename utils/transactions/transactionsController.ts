@@ -1,23 +1,4 @@
-export type WestpacTransaction = {
-  _id?: any;
-  BankAccount: number;
-  Date: Date;
-  Description: String;
-  DebitAmount?: number;
-  CreditAmount?: number;
-  Balance: number;
-  Categories: String;
-};
-
-export const WestpacHeaders = [
-  "BankAccount",
-  "Date",
-  "Description",
-  "DebitAmount",
-  "CreditAmount",
-  "Balance",
-  "Categories",
-];
+import { WestpacTransaction } from "./transactionDomainModels";
 
 const TRANSACTIONS_API_URL = "/api/transactions";
 
@@ -32,11 +13,7 @@ export async function GetSavedTransactions(): Promise<WestpacTransaction[]> {
 
 export async function DeleteAllTransactions(): Promise<WestpacTransaction[]> {
   const data: WestpacTransaction[] = await fetch(TRANSACTIONS_API_URL, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify([]),
+    method: "DELETE",
   }).then(async (res) => {
     return await res.json();
   });

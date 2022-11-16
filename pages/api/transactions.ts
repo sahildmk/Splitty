@@ -1,4 +1,3 @@
-import clientPromise from "@/utils/mongodb";
 import {
   AddTransactions,
   DeleteAllTransactions,
@@ -20,12 +19,11 @@ export default async function handler(
       break;
 
     case "POST":
-      if (body.length == 0) {
-        response = await DeleteAllTransactions();
-      } else {
-        response = await AddTransactions(body);
-      }
+      response = await AddTransactions(body);
       break;
+
+    case "DELETE":
+      response = await DeleteAllTransactions();
 
     default:
       break;
