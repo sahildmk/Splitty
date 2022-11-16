@@ -12,7 +12,7 @@ const TransactionCard: NextPage<TransactionProps> = ({ transaction }) => {
 
   return (
     <div
-      className="flex items-center max-w-2xl"
+      className="flex items-center max-w-3xl my-6"
       onMouseOver={() => {
         setShowSplitBtn(true);
       }}
@@ -20,7 +20,7 @@ const TransactionCard: NextPage<TransactionProps> = ({ transaction }) => {
         setShowSplitBtn(false);
       }}
     >
-      <div className="flex bg-gray-700 my-5 px-6 py-5 hover:scale-[1.03] transition-all rounded-md hover:cursor-pointer w-full">
+      <div className="flex items-center bg-gray-700 px-6 py-5 hover:scale-[1.03] transition-all rounded-md hover:cursor-pointer w-full">
         <div className="text-xs text-gray-400 grid place-items-center">
           {transaction.Date.toString()}
         </div>
@@ -39,14 +39,11 @@ const TransactionCard: NextPage<TransactionProps> = ({ transaction }) => {
           />
         </div>
       </div>
-      <button
-        className={`scale${
-          showSplitBtn ? "w-auto" : "w-0"
-        } bg-purple-800 ml-4 my-5 px-5 hover:scale-[1.03] transition-all rounded-md hover:cursor-pointer`}
-      >
-        Split
-        <div className="w-auto overflow-hidden transition-all"></div>
-      </button>
+      {transaction.DebitAmount && (
+        <button className="bg-purple-800 ml-4 px-6 py-5 hover:scale-[1.03] transition-all rounded-md hover:cursor-pointer">
+          Split
+        </button>
+      )}
     </div>
   );
 };
