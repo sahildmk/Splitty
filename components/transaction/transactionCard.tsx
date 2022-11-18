@@ -1,5 +1,5 @@
 import { NextPage } from "next";
-import { ClipboardIcon } from "@heroicons/react/24/outline";
+import { ClipboardIcon, CheckIcon } from "@heroicons/react/24/outline";
 import { WestpacTransaction } from "@/utils/transactions/transactionDomainModels";
 import { useState } from "react";
 
@@ -7,40 +7,70 @@ interface TransactionProps {
   transaction: WestpacTransaction;
 }
 
+interface AmountContainerProps {
+  totalAmount: Number | undefined;
+  isCredit: Boolean;
+}
+
+const AmountContainer: NextPage<AmountContainerProps> = ({
+  totalAmount,
+  isCredit,
+}) => {
+  return (
+    <span
+      className={
+        isCredit
+          ? "text-emerald-300 bg-emerald-800 rounded-[0.2rem] px-[0.3rem] py-[0.05rem]"
+          : ""
+      }
+    >
+      {isCredit ? "" : "-"}${totalAmount?.toString()}
+    </span>
+  );
+};
+
 const TransactionCard: NextPage<TransactionProps> = ({ transaction }) => {
-  const [showSplitBtn, setShowSplitBtn] = useState(false);
+  const [coppied, setCoppied] = useState(false);
+
+  const isCredit = transaction.CreditAmount?.toString() !== "";
+
+  function CopyHandler() {
+    navigator.clipboard.writeText(transaction._id?.toString()!);
+    setCoppied(true);
+
+    new Promise((resolve) => {
+      setTimeout(resolve, 2000);
+    }).then(() => {
+      setCoppied(false);
+    });
+  }
 
   return (
-    <div
-      className="flex items-center max-w-3xl my-6"
-      onMouseOver={() => {
-        setShowSplitBtn(true);
-      }}
-      onMouseOut={() => {
-        setShowSplitBtn(false);
-      }}
-    >
+    <div className="flex items-center max-w-2xl my-6">
       <div className="flex items-center bg-gray-700 px-6 py-5 hover:scale-[1.03] transition-all rounded-md hover:cursor-pointer w-full">
-        <div className="text-xs text-gray-400 grid place-items-center">
-          {transaction.Date.toString()}
-        </div>
-        <div className="ml-5 font-medium">{transaction.Description}</div>
+        <div className="mr-2 font-medium">{transaction.Description}</div>
         <div className="ml-auto">
-          $<span className="text-red-500">{transaction.DebitAmount}</span>
-          <span className="text-green-500">{transaction.CreditAmount}</span>
+          <AmountContainer
+            totalAmount={transaction.CreditAmount || transaction.DebitAmount}
+            isCredit={isCredit}
+          />
         </div>
         <div className="grid place-items-center">
-          <ClipboardIcon
-            className="h-5 pl-4 hover:text-gray-400 transition-all"
-            onClick={() => {
-              navigator.clipboard.writeText(transaction._id!.toString());
-              alert(`Copy transaction ${transaction._id?.toString()}`);
-            }}
-          />
+          {coppied ? (
+            <CheckIcon className="h-5 pl-4 text-green-400" />
+          ) : (
+            <ClipboardIcon
+              className="h-5 pl-4 hover:text-gray-400 transition-all"
+              onClick={CopyHandler}
+            />
+          )}
         </div>
       </div>
       {transaction.DebitAmount && (
-        <button className="bg-purple-800 ml-4 px-6 py-5 hover:scale-[1.03] transition-all rounded-md hover:cursor-pointer">
+        <button
+          disabled
+          className="bg-purple-800 ml-4 px-6 py-5 hover:scale-[1.03] transition-all rounded-md hover:cursor-pointer"
+        >
           Split
         </button>
       )}

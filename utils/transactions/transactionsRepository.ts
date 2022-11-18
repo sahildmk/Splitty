@@ -1,13 +1,28 @@
 import clientPromise from "@/utils/mongodb";
-import { MongoClient } from "mongodb";
-import { WestpacTransaction } from "./transactionsController";
+import { MongoClient, Document } from "mongodb";
+import { WestpacTransaction } from "./transactionDomainModels";
 
 export async function GetAllTransactions() {
   const client = await clientPromise;
 
   const collection = await TransactionsCollection(client).aggregate().toArray();
 
-  return collection;
+  const transactions: { [key: string]: Document[] } = {};
+
+  for (let idx in collection) {
+    let trx = collection[idx];
+
+    let key = trx["Date"];
+    let val = transactions[key];
+
+    if (!val) {
+      transactions[key] = [trx];
+    } else {
+      transactions[key].push(trx);
+    }
+  }
+
+  return transactions;
 }
 
 export async function AddTransactions(transactions: WestpacTransaction[]) {

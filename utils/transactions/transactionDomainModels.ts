@@ -1,6 +1,10 @@
 import { ObjectId } from "mongodb";
 
-export type Transaction = WestpacTransaction;
+export type Transaction = WestpacTransaction & {
+  HasSplitTransacitons: Boolean;
+};
+
+export type TransactionsByDateResult = { [key: string]: Transaction[] };
 
 export type WestpacTransaction = {
   _id?: ObjectId;

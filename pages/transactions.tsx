@@ -1,12 +1,6 @@
 import type { NextPage } from "next";
 import Head from "next/head";
-import {
-  ChangeEvent,
-  Dispatch,
-  SetStateAction,
-  useEffect,
-  useState,
-} from "react";
+import { ChangeEvent } from "react";
 import ParseCSV from "@/utils/csv-parser";
 
 import {
@@ -24,6 +18,7 @@ import {
 import {
   WestpacTransaction,
   WestpacHeaders,
+  TransactionsByDateResult,
 } from "@/utils/transactions/transactionDomainModels";
 
 const TransactionsPage: NextPage = () => {
@@ -47,7 +42,31 @@ const TransactionsPage: NextPage = () => {
     { refetchOnWindowFocus: false }
   );
 
+  const GetTransactionsList = (data: TransactionsByDateResult) => {
+    let content = [];
+
+    let i = 0;
+    for (let key in data) {
+      let transactions = data[key];
+
+      content.push(<div key={key}>{key}</div>);
+
+      transactions.forEach((transaction) => {
+        content.push(
+          <TransactionCard
+            key={transaction._id?.toString()}
+            transaction={transaction}
+          />
+        );
+      });
+    }
+
+    return content;
+  };
+
   if (isLoading) return <>Loading...</>;
+  else {
+  }
 
   // if (isFetching || isRefetching) return <>Fetching...</>;
 
@@ -76,17 +95,11 @@ const TransactionsPage: NextPage = () => {
           </form>
         </div>
 
-        <button onClick={() => deleteTransactionsMut.mutate()}>
+        <button onClick={() => deleteTransactionsMut.mutate()} className="mb-5">
           Delete current transactions
         </button>
 
-        {isLoading || isFetching ? (
-          <>Loading...</>
-        ) : (
-          data?.map((transaction, index) => (
-            <TransactionCard key={index} transaction={transaction} />
-          ))
-        )}
+        {isLoading || isFetching ? <>Loading...</> : GetTransactionsList(data!)}
       </main>
 
       <footer></footer>
@@ -99,7 +112,7 @@ export default TransactionsPage;
 async function HandleUploadFile(
   e: ChangeEvent<HTMLInputElement>,
   mutation: UseMutationResult<
-    WestpacTransaction[],
+    TransactionsByDateResult,
     unknown,
     WestpacTransaction[],
     unknown
