@@ -11,6 +11,6 @@
   }
   body {
     @apply text-white;
-    @apply bg-gray-900;
+    @apply bg-neutral-900;
   }
 }

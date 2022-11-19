@@ -1,6 +1,8 @@
+import Modal, { ModalContext } from "@/components/shared/modal";
 import type { NextPage } from "next";
 import Head from "next/head";
 import Link from "next/link";
+import { useContext, useState } from "react";
 
 const Home: NextPage = () => {
   return (

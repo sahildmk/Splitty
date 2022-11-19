@@ -1,10 +1,14 @@
 import { NextPage } from "next";
 import { ClipboardIcon, CheckIcon } from "@heroicons/react/24/outline";
-import { WestpacTransaction } from "@/utils/transactions/transactionDomainModels";
-import { useState } from "react";
+import {
+  Transaction,
+  WestpacTransaction,
+} from "@/utils/transactions/transactionDomainModels";
+import { useContext, useState } from "react";
+import Modal, { ModalContext } from "../shared/modal";
 
 interface TransactionProps {
-  transaction: WestpacTransaction;
+  transaction: Transaction;
 }
 
 interface AmountContainerProps {
@@ -31,6 +35,7 @@ const AmountContainer: NextPage<AmountContainerProps> = ({
 
 const TransactionCard: NextPage<TransactionProps> = ({ transaction }) => {
   const [coppied, setCoppied] = useState(false);
+  const modalContext = useContext(ModalContext);
 
   const isCredit = transaction.CreditAmount?.toString() !== "";
 
@@ -46,8 +51,8 @@ const TransactionCard: NextPage<TransactionProps> = ({ transaction }) => {
   }
 
   return (
-    <div className="flex items-center max-w-2xl my-6">
-      <div className="flex items-center bg-gray-700 px-6 py-5 hover:scale-[1.03] transition-all rounded-md hover:cursor-pointer w-full">
+    <div className="flex items-center my-6">
+      <div className="flex items-center bg-neutral-700 px-6 py-5 hover:scale-[1.03] transition-all rounded-md hover:cursor-pointer w-full">
         <div className="mr-2 font-medium">{transaction.Description}</div>
         <div className="ml-auto">
           <AmountContainer
@@ -60,7 +65,7 @@ const TransactionCard: NextPage<TransactionProps> = ({ transaction }) => {
             <CheckIcon className="h-5 pl-4 text-green-400" />
           ) : (
             <ClipboardIcon
-              className="h-5 pl-4 hover:text-gray-400 transition-all"
+              className="h-5 pl-4 hover:text-neutral-400 transition-all"
               onClick={CopyHandler}
             />
           )}
@@ -68,8 +73,10 @@ const TransactionCard: NextPage<TransactionProps> = ({ transaction }) => {
       </div>
       {transaction.DebitAmount && (
         <button
-          disabled
           className="bg-purple-800 ml-4 px-6 py-5 hover:scale-[1.03] transition-all rounded-md hover:cursor-pointer"
+          onClick={() => {
+            modalContext.openModal(transaction);
+          }}
         >
           Split
         </button>

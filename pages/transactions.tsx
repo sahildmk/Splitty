@@ -1,6 +1,6 @@
 import type { NextPage } from "next";
 import Head from "next/head";
-import { ChangeEvent } from "react";
+import { ChangeEvent, useState } from "react";
 import ParseCSV from "@/utils/csv-parser";
 
 import {
@@ -19,10 +19,19 @@ import {
   WestpacTransaction,
   WestpacHeaders,
   TransactionsByDateResult,
+  Transaction,
 } from "@/utils/transactions/transactionDomainModels";
+import Modal, { ModalContext } from "@/components/shared/modal";
 
 const TransactionsPage: NextPage = () => {
   const queryClient = useQueryClient();
+  const [showModal, setShowModal] = useState(false);
+  const [modalTransaction, setModalTransaction] = useState<Transaction>();
+
+  const openModalCallback = (transaction: Transaction) => {
+    setModalTransaction(transaction);
+    setShowModal(true);
+  };
 
   const uploadTransactionsMut = useMutation(UploadTransactions, {
     onSuccess: (data) => {
@@ -42,10 +51,11 @@ const TransactionsPage: NextPage = () => {
     { refetchOnWindowFocus: false }
   );
 
-  const GetTransactionsList = (data: TransactionsByDateResult) => {
+  const GetTransactionsList = (data: TransactionsByDateResult | undefined) => {
     let content = [];
 
-    let i = 0;
+    if (!data) return <></>;
+
     for (let key in data) {
       let transactions = data[key];
 
@@ -72,6 +82,12 @@ const TransactionsPage: NextPage = () => {
 
   return (
     <div>
+      {showModal && (
+        <Modal showModalFn={setShowModal}>
+          <div>{modalTransaction?.Description}</div>
+        </Modal>
+      )}
+
       <Head>
         <title>Transactions</title>
         <meta name="description" content="Split things" />
@@ -99,7 +115,15 @@ const TransactionsPage: NextPage = () => {
           Delete current transactions
         </button>
 
-        {isLoading || isFetching ? <>Loading...</> : GetTransactionsList(data!)}
+        <ModalContext.Provider value={{ openModal: openModalCallback }}>
+          <section className="max-w-2xl">
+            {isLoading || isFetching ? (
+              <>Loading...</>
+            ) : (
+              GetTransactionsList(data)
+            )}
+          </section>
+        </ModalContext.Provider>
       </main>
 
       <footer></footer>
