@@ -24,7 +24,7 @@ const Modal: NextPage<ModalProps> = ({ showModalFn, children }) => {
         onClick={(e) => {
           e.stopPropagation();
         }}
-        className="p-5 rounded-md bg-neutral-700"
+        className="p-8 rounded-md bg-neutral-700 max-w-lg"
       >
         {children}
       </div>

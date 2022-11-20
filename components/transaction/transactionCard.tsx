@@ -1,9 +1,6 @@
 import { NextPage } from "next";
 import { ClipboardIcon, CheckIcon } from "@heroicons/react/24/outline";
-import {
-  Transaction,
-  WestpacTransaction,
-} from "@/utils/transactions/transactionDomainModels";
+import { Transaction } from "@/utils/transactions/transactionDomainModels";
 import { useContext, useState } from "react";
 import Modal, { ModalContext } from "../shared/modal";
 
@@ -53,7 +50,7 @@ const TransactionCard: NextPage<TransactionProps> = ({ transaction }) => {
   return (
     <div className="flex items-center my-6">
       <div className="flex items-center bg-neutral-700 px-6 py-5 hover:scale-[1.03] transition-all rounded-md hover:cursor-pointer w-full">
-        <div className="mr-2 font-medium">{transaction.Description}</div>
+        <div className="mr-2 font-light">{transaction.Description}</div>
         <div className="ml-auto">
           <AmountContainer
             totalAmount={transaction.CreditAmount || transaction.DebitAmount}

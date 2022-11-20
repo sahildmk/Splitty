@@ -1,7 +1,7 @@
 import { ObjectId } from "mongodb";
 
 export type Transaction = WestpacTransaction & {
-  HasSplitTransacitons: Boolean;
+  IsSplitTransaction: Boolean;
 };
 
 export type TransactionsByDateResult = { [key: string]: Transaction[] };

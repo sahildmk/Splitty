@@ -1,6 +1,6 @@
 import clientPromise from "@/utils/mongodb";
 import { MongoClient, Document } from "mongodb";
-import { WestpacTransaction } from "./transactionDomainModels";
+import { Transaction } from "./transactionDomainModels";
 
 export async function GetAllTransactions() {
   const client = await clientPromise;
@@ -25,8 +25,13 @@ export async function GetAllTransactions() {
   return transactions;
 }
 
-export async function AddTransactions(transactions: WestpacTransaction[]) {
+export async function AddTransactions(transactions: Transaction[]) {
   const client = await clientPromise;
+
+  transactions = transactions.map((val) => {
+    val.IsSplitTransaction = false;
+    return val;
+  });
 
   // Delete all existing transactions
   await DeleteAllTransactions();

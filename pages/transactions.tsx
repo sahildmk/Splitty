@@ -2,7 +2,6 @@ import type { NextPage } from "next";
 import Head from "next/head";
 import { ChangeEvent, useState } from "react";
 import ParseCSV from "@/utils/csv-parser";
-
 import {
   useMutation,
   UseMutationResult,
@@ -16,12 +15,12 @@ import {
   DeleteAllTransactions,
 } from "@/utils/transactions/transactionsController";
 import {
-  WestpacTransaction,
   WestpacHeaders,
   TransactionsByDateResult,
   Transaction,
 } from "@/utils/transactions/transactionDomainModels";
-import Modal, { ModalContext } from "@/components/shared/modal";
+import { ModalContext } from "@/components/shared/modal";
+import SplitTransactionModal from "@/components/transaction/splitTransactionModal";
 
 const TransactionsPage: NextPage = () => {
   const queryClient = useQueryClient();
@@ -56,10 +55,24 @@ const TransactionsPage: NextPage = () => {
 
     if (!data) return <></>;
 
+    var options: Intl.DateTimeFormatOptions = {
+      weekday: "short",
+      year: "numeric",
+      month: "short",
+      day: "2-digit",
+    };
+
     for (let key in data) {
+      let splitDate = key.split("/").map((v) => parseInt(v));
+      let date = new Date(splitDate[2], splitDate[1], splitDate[0]);
+
       let transactions = data[key];
 
-      content.push(<div key={key}>{key}</div>);
+      content.push(
+        <div key={key} className="w-fit bg-neutral-600 rounded-md px-3 py-1">
+          {date.toLocaleString("en-AU", options)}
+        </div>
+      );
 
       transactions.forEach((transaction) => {
         content.push(
@@ -78,14 +91,13 @@ const TransactionsPage: NextPage = () => {
   else {
   }
 
-  // if (isFetching || isRefetching) return <>Fetching...</>;
-
   return (
     <div>
       {showModal && (
-        <Modal showModalFn={setShowModal}>
-          <div>{modalTransaction?.Description}</div>
-        </Modal>
+        <SplitTransactionModal
+          transaction={modalTransaction}
+          showModalFn={setShowModal}
+        />
       )}
 
       <Head>
@@ -138,12 +150,12 @@ async function HandleUploadFile(
   mutation: UseMutationResult<
     TransactionsByDateResult,
     unknown,
-    WestpacTransaction[],
+    Transaction[],
     unknown
   >
 ) {
   if (e.target.files && e.target.files.length === 1) {
-    let transactions = await ParseCSV<WestpacTransaction>(
+    let transactions = await ParseCSV<Transaction>(
       e.target.files[0],
       WestpacHeaders
     );

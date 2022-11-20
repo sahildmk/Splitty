@@ -1,7 +1,6 @@
 import {
   Transaction,
   TransactionsByDateResult,
-  WestpacTransaction,
 } from "./transactionDomainModels";
 
 const TRANSACTIONS_API_URL = "/api/transactions";
@@ -27,7 +26,7 @@ export async function DeleteAllTransactions(): Promise<TransactionsByDateResult>
 }
 
 export async function UploadTransactions(
-  transactions: WestpacTransaction[]
+  transactions: Transaction[]
 ): Promise<TransactionsByDateResult> {
   const data: TransactionsByDateResult = await fetch(TRANSACTIONS_API_URL, {
     method: "POST",
