@@ -1,0 +1,23 @@
+.btn {
+  @apply px-4 py-2 rounded-md w-full transition-all shadow-md;
+}
+
+.btnDefaultSolid {
+  @apply btn;
+  @apply bg-neutral-600 hover:bg-neutral-700;
+}
+
+.btnDefaultOutline {
+  @apply btn;
+  @apply border border-neutral-500 hover:bg-neutral-500;
+}
+
+.btnPrimarySolid {
+  @apply btn;
+  @apply bg-blue-600 hover:bg-blue-700;
+}
+
+.btnPrimaryOutline {
+  @apply btn;
+  @apply border border-blue-600 hover:bg-blue-700;
+}

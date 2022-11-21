@@ -12,6 +12,8 @@ const SplitTransactionModal: NextPage<SplitTransactionModalProps> = ({
   transaction,
   showModalFn,
 }) => {
+  const handleConfirmSplitTransaction = () => {};
+
   return (
     <Modal showModalFn={showModalFn}>
       <div>
@@ -32,12 +34,12 @@ const SplitTransactionModal: NextPage<SplitTransactionModalProps> = ({
         </section>
         <footer className="flex gap-3">
           <Button
-            type={ButtonType.Default}
+            type="Default"
             style="Outline"
             text="Cancel"
             onClick={() => showModalFn(false)}
           />
-          <Button type={ButtonType.Primary} style="Solid" text="Confirm" />
+          <Button type="Primary" style="Solid" text="Confirm" />
         </footer>
       </div>
     </Modal>
