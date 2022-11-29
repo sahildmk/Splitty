@@ -75,7 +75,7 @@ const TransactionCard: NextPage<TransactionProps> = ({ transaction }) => {
             modalContext.openModal(transaction);
           }}
         >
-          Split
+          {transaction.IsSplitTransaction ? "Already Split" : "Split"}
         </button>
       )}
     </div>

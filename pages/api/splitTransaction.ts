@@ -2,6 +2,7 @@ import {
   AddTransactions,
   DeleteAllTransactions,
   GetAllTransactions,
+  SplitTransaction,
 } from "@/utils/transactions/transactionsRepository";
 import type { NextApiRequest, NextApiResponse } from "next";
 
@@ -19,7 +20,7 @@ export default async function handler(
       break;
 
     case "POST":
-      response = await AddTransactions(body);
+      response = await SplitTransaction(body.id);
       break;
 
     case "DELETE":

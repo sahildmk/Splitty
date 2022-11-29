@@ -1,4 +1,5 @@
 import type { NextPage } from "next";
+import styles from "./transactions.module.css";
 import Head from "next/head";
 import { ChangeEvent, useState } from "react";
 import ParseCSV from "@/utils/csv-parser";
@@ -87,7 +88,12 @@ const TransactionsPage: NextPage = () => {
     return content;
   };
 
-  if (isLoading) return <>Loading...</>;
+  if (isLoading)
+    return (
+      <div className={styles.loadingContainer}>
+        <div className={styles.loading}></div>
+      </div>
+    );
   else {
   }
 

@@ -1,6 +1,7 @@
+import { SplitTransaction } from "@/utils/transactions/splitTransactionsController";
 import { Transaction } from "@/utils/transactions/transactionDomainModels";
 import { NextPage } from "next";
-import Button, { ButtonType } from "../shared/button";
+import Button from "../shared/button";
 import Modal from "../shared/modal";
 
 interface SplitTransactionModalProps {
@@ -39,7 +40,17 @@ const SplitTransactionModal: NextPage<SplitTransactionModalProps> = ({
             text="Cancel"
             onClick={() => showModalFn(false)}
           />
-          <Button type="Primary" style="Solid" text="Confirm" />
+          <Button
+            type="Primary"
+            style="Solid"
+            text="Confirm"
+            onClick={() => {
+              if (transaction) {
+                var res = SplitTransaction(transaction);
+                console.log(res);
+              }
+            }}
+          />
         </footer>
       </div>
     </Modal>

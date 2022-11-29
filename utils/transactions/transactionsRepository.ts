@@ -1,6 +1,12 @@
 import clientPromise from "@/utils/mongodb";
-import { MongoClient, Document } from "mongodb";
+import { MongoClient, Document, ObjectId } from "mongodb";
 import { Transaction } from "./transactionDomainModels";
+
+function TransactionsCollection(client: MongoClient) {
+  return client.db("Splitty").collection("Transactions");
+}
+
+//#region Transactions
 
 export async function GetAllTransactions() {
   const client = await clientPromise;
@@ -50,6 +56,34 @@ export async function DeleteAllTransactions() {
   return await GetAllTransactions();
 }
 
-function TransactionsCollection(client: MongoClient) {
-  return client.db("Splitty").collection("Transactions");
+//#endregion Transactions
+
+//#region SplitTransactions
+
+export async function SplitTransaction(transactionId: string) {
+  const client = await clientPromise;
+
+  console.log("transactionId:", transactionId);
+
+  // var trx = await TransactionsCollection(client).findOne({
+  //   _id: new ObjectId(transactionId),
+  // });
+
+  // console.log(trx);
+
+  var { matchedCount, modifiedCount, upsertedId } =
+    await TransactionsCollection(client).updateOne(
+      { _id: new ObjectId(transactionId) },
+      {
+        $set: {
+          IsSplitTransaction: true,
+        },
+      }
+    );
+
+  console.log(matchedCount, modifiedCount, "upsertId:", upsertedId);
+
+  return "";
 }
+
+//#endregion SplitTransactions
