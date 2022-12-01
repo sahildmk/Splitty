@@ -4,13 +4,13 @@ import { NextPage } from "next";
 import Button from "../shared/button";
 import Modal from "../shared/modal";
 
-interface SplitTransactionModalProps {
+interface ContributeTransactionModalProps {
   transaction?: Transaction;
   showModalFn: Function;
   confirmCallback: Function;
 }
 
-const SplitTransactionModal: NextPage<SplitTransactionModalProps> = ({
+const ContributeTransactionModal: NextPage<ContributeTransactionModalProps> = ({
   transaction,
   showModalFn,
   confirmCallback,
@@ -20,17 +20,15 @@ const SplitTransactionModal: NextPage<SplitTransactionModalProps> = ({
   return (
     <Modal showModalFn={showModalFn}>
       <div>
-        <header className="text-xl font-semibold pb-5">
-          Split Transaction
-        </header>
+        <header className="text-xl font-semibold pb-5">Link Transaction</header>
         <section className="pb-7">
-          <h3 className=" pb-5">Do you want to split this transaction?</h3>
+          <h3 className=" pb-5">Use this transaction to pay off a debit?</h3>
           <section className="bg-neutral-800 p-5 rounded-md font-light">
             <p className=" pb-4">{transaction?.Description}</p>
             <p className="">
               Total:
               <span className="ml-1 font-normal text-neutral-800 bg-neutral-300 rounded-[0.2rem] px-[0.3rem] py-[0.05rem]">
-                ${transaction?.DebitAmount}
+                ${transaction?.CreditAmount}
               </span>
             </p>
           </section>
@@ -62,4 +60,4 @@ const SplitTransactionModal: NextPage<SplitTransactionModalProps> = ({
   );
 };
 
-export default SplitTransactionModal;
+export default ContributeTransactionModal;

@@ -31,5 +31,5 @@ export type SplitTransaction = {
   _id?: ObjectId;
   TransactionId: ObjectId;
   FulfillingTransactionId: ObjectId;
-  FilfillingAmount: Number;
+  TotalAmount: Number;
 };

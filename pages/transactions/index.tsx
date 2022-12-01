@@ -1,7 +1,7 @@
 import type { NextPage } from "next";
 import styles from "./transactions.module.css";
 import Head from "next/head";
-import { ChangeEvent, useState } from "react";
+import { ChangeEvent, createContext, useState } from "react";
 import ParseCSV from "@/utils/csv-parser";
 import {
   useMutation,
@@ -20,17 +20,30 @@ import {
   TransactionsByDateResult,
   Transaction,
 } from "@/utils/transactions/transactionDomainModels";
-import { ModalContext } from "@/components/shared/modal";
 import SplitTransactionModal from "@/components/transaction/splitTransactionModal";
+import ContributeTransactionModal from "@/components/transaction/contributeTransactionModal";
+
+type ModalContextType = { openSplitModal: any; openContributeModal: any };
+
+export const ModalContext = createContext<ModalContextType>({
+  openSplitModal: null,
+  openContributeModal: null,
+});
 
 const TransactionsPage: NextPage = () => {
   const queryClient = useQueryClient();
-  const [showModal, setShowModal] = useState(false);
+  const [showSplitModal, setShowSplitModal] = useState(false);
+  const [showContributeModal, setShowContributeModal] = useState(false);
   const [modalTransaction, setModalTransaction] = useState<Transaction>();
 
-  const openModalCallback = (transaction: Transaction) => {
+  const openSplitModalCallback = (transaction: Transaction) => {
     setModalTransaction(transaction);
-    setShowModal(true);
+    setShowSplitModal(true);
+  };
+
+  const openContributeModalCallback = (transaction: Transaction) => {
+    setModalTransaction(transaction);
+    setShowContributeModal(true);
   };
 
   const uploadTransactionsMut = useMutation(UploadTransactions, {
@@ -45,7 +58,7 @@ const TransactionsPage: NextPage = () => {
     },
   });
 
-  const { isLoading, data, isFetching } = useQuery(
+  const { isLoading, data, isFetching, refetch } = useQuery(
     ["transactions"],
     GetSavedTransactions,
     { refetchOnWindowFocus: false }
@@ -99,10 +112,19 @@ const TransactionsPage: NextPage = () => {
 
   return (
     <div>
-      {showModal && (
+      {showSplitModal && (
         <SplitTransactionModal
           transaction={modalTransaction}
-          showModalFn={setShowModal}
+          showModalFn={setShowSplitModal}
+          confirmCallback={refetch}
+        />
+      )}
+
+      {showContributeModal && (
+        <ContributeTransactionModal
+          transaction={modalTransaction}
+          showModalFn={setShowContributeModal}
+          confirmCallback={refetch}
         />
       )}
 
@@ -133,7 +155,12 @@ const TransactionsPage: NextPage = () => {
           Delete current transactions
         </button>
 
-        <ModalContext.Provider value={{ openModal: openModalCallback }}>
+        <ModalContext.Provider
+          value={{
+            openSplitModal: openSplitModalCallback,
+            openContributeModal: openContributeModalCallback,
+          }}
+        >
           <section className="max-w-2xl">
             {isLoading || isFetching ? (
               <>Loading...</>

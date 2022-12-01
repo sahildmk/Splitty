@@ -1,0 +1,9 @@
+.transactionCardBase {
+  @apply flex items-center px-6 py-5 hover:scale-[1.03];
+  @apply transition-all hover:cursor-pointer w-full;
+}
+
+.transactionCardDefault {
+  @apply transactionCardBase;
+  @apply bg-transparent relative;
+}

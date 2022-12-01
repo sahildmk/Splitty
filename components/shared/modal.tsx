@@ -1,12 +1,6 @@
 import { NextPage } from "next";
 import { createContext, ReactElement } from "react";
 
-type ModalContextType = { openModal: any };
-
-export const ModalContext = createContext<ModalContextType>({
-  openModal: null,
-});
-
 interface ModalProps {
   showModalFn: Function;
   children: ReactElement;
@@ -24,7 +18,7 @@ const Modal: NextPage<ModalProps> = ({ showModalFn, children }) => {
         onClick={(e) => {
           e.stopPropagation();
         }}
-        className="p-8 rounded-md bg-neutral-700 max-w-lg"
+        className="shadow-lg p-8 rounded-md bg-neutral-700 max-w-lg"
       >
         {children}
       </div>

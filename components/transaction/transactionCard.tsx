@@ -2,7 +2,9 @@ import { NextPage } from "next";
 import { ClipboardIcon, CheckIcon } from "@heroicons/react/24/outline";
 import { Transaction } from "@/utils/transactions/transactionDomainModels";
 import { useContext, useState } from "react";
-import Modal, { ModalContext } from "../shared/modal";
+import Modal from "../shared/modal";
+import styles from "./transactionCard.module.css";
+import { ModalContext } from "@/pages/transactions";
 
 interface TransactionProps {
   transaction: Transaction;
@@ -33,6 +35,7 @@ const AmountContainer: NextPage<AmountContainerProps> = ({
 const TransactionCard: NextPage<TransactionProps> = ({ transaction }) => {
   const [coppied, setCoppied] = useState(false);
   const modalContext = useContext(ModalContext);
+  const [percentFilled, setPercentFilled] = useState(5);
 
   const isCredit = transaction.CreditAmount?.toString() !== "";
 
@@ -48,16 +51,23 @@ const TransactionCard: NextPage<TransactionProps> = ({ transaction }) => {
   }
 
   return (
-    <div className="flex items-center my-6">
-      <div className="flex items-center bg-neutral-700 px-6 py-5 hover:scale-[1.03] transition-all rounded-md hover:cursor-pointer w-full">
-        <div className="mr-2 font-light">{transaction.Description}</div>
-        <div className="ml-auto">
+    <div className="flex items-center my-6 relative">
+      <div
+        className={styles.transactionCardDefault}
+        onClick={() => {
+          modalContext.openContributeModal(transaction);
+          // if (transaction.DebitAmount && percentFilled < 100)
+          //   setPercentFilled((p) => p + 5);
+        }}
+      >
+        <div className="mr-2 font-light z-20">{transaction.Description}</div>
+        <div className="ml-auto z-20">
           <AmountContainer
             totalAmount={transaction.CreditAmount || transaction.DebitAmount}
             isCredit={isCredit}
           />
         </div>
-        <div className="grid place-items-center">
+        <div className="grid place-items-center z-20">
           {coppied ? (
             <CheckIcon className="h-5 pl-4 text-green-400" />
           ) : (
@@ -67,15 +77,22 @@ const TransactionCard: NextPage<TransactionProps> = ({ transaction }) => {
             />
           )}
         </div>
+        {transaction.DebitAmount && (
+          <div
+            style={{ width: `${percentFilled}%` }}
+            className={`absolute left-0 rounded-md bg-purple-700 h-full z-10`}
+          ></div>
+        )}
+        <div className="absolute left-0 rounded-md bg-neutral-700 w-full h-full"></div>
       </div>
-      {transaction.DebitAmount && (
+      {transaction.DebitAmount && !transaction.IsSplitTransaction && (
         <button
           className="bg-purple-800 ml-4 px-6 py-5 hover:scale-[1.03] transition-all rounded-md hover:cursor-pointer"
           onClick={() => {
-            modalContext.openModal(transaction);
+            modalContext.openSplitModal(transaction);
           }}
         >
-          {transaction.IsSplitTransaction ? "Already Split" : "Split"}
+          Split
         </button>
       )}
     </div>
