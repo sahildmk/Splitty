@@ -22,6 +22,7 @@ import {
 } from "@/utils/transactions/transactionDomainModels";
 import SplitTransactionModal from "@/components/transaction/splitTransactionModal";
 import ContributeTransactionModal from "@/components/transaction/contributeTransactionModal";
+import Button from "@/components/shared/button";
 
 type ModalContextType = { openSplitModal: any; openContributeModal: any };
 
@@ -151,9 +152,14 @@ const TransactionsPage: NextPage = () => {
           </form>
         </div>
 
-        <button onClick={() => deleteTransactionsMut.mutate()} className="mb-5">
-          Delete current transactions
-        </button>
+        <div className="mb-5 w-1/6">
+          <Button
+            text="Delete current transactions"
+            style="Outline"
+            type="Default"
+            onClick={() => deleteTransactionsMut.mutate()}
+          />
+        </div>
 
         <ModalContext.Provider
           value={{

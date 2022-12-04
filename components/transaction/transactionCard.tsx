@@ -35,7 +35,7 @@ const AmountContainer: NextPage<AmountContainerProps> = ({
 const TransactionCard: NextPage<TransactionProps> = ({ transaction }) => {
   const [coppied, setCoppied] = useState(false);
   const modalContext = useContext(ModalContext);
-  const [percentFilled, setPercentFilled] = useState(5);
+  const [percentFilled, setPercentFilled] = useState(80);
 
   const isCredit = transaction.CreditAmount?.toString() !== "";
 
@@ -55,7 +55,8 @@ const TransactionCard: NextPage<TransactionProps> = ({ transaction }) => {
       <div
         className={styles.transactionCardDefault}
         onClick={() => {
-          modalContext.openContributeModal(transaction);
+          if (transaction.CreditAmount)
+            modalContext.openContributeModal(transaction);
           // if (transaction.DebitAmount && percentFilled < 100)
           //   setPercentFilled((p) => p + 5);
         }}
@@ -79,7 +80,9 @@ const TransactionCard: NextPage<TransactionProps> = ({ transaction }) => {
         </div>
         {transaction.DebitAmount && (
           <div
-            style={{ width: `${percentFilled}%` }}
+            style={{
+              width: `${transaction.IsSplitTransaction ? percentFilled : 0}%`,
+            }}
             className={`absolute left-0 rounded-md bg-purple-700 h-full z-10`}
           ></div>
         )}

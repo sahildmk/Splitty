@@ -1,5 +1,6 @@
 .btn {
   @apply px-4 py-2 rounded-md w-full transition-all shadow-md;
+  @apply max-w-sm;
 }
 
 .btnDefaultSolid {
