@@ -1,9 +1,4 @@
-import {
-  AddTransactions,
-  DeleteAllTransactions,
-  GetAllTransactions,
-  SplitTransaction,
-} from "@/utils/transactions/transactionsRepository";
+import { SplitTransactionModel } from "@/utils/transactions/transactionsRepository";
 import type { NextApiRequest, NextApiResponse } from "next";
 
 export default async function handler(
@@ -12,19 +7,12 @@ export default async function handler(
 ) {
   const { method, body } = req;
 
-  let response: any;
+  let response: any = {};
 
   switch (method) {
-    case "GET":
-      response = await GetAllTransactions();
-      break;
-
     case "POST":
       response = await SplitTransaction(body.id);
       break;
-
-    case "DELETE":
-      response = await DeleteAllTransactions();
 
     default:
       break;

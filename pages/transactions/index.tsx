@@ -11,7 +11,7 @@ import {
 } from "@tanstack/react-query";
 import TransactionCard from "@/components/transaction/transactionCard";
 import {
-  GetSavedTransactions,
+  GetSavedTransactionsByDate,
   UploadTransactions,
   DeleteAllTransactions,
 } from "@/utils/transactions/transactionsController";
@@ -61,7 +61,7 @@ const TransactionsPage: NextPage = () => {
 
   const { isLoading, data, isFetching, refetch } = useQuery(
     ["transactions"],
-    GetSavedTransactions,
+    GetSavedTransactionsByDate,
     { refetchOnWindowFocus: false }
   );
 
@@ -84,7 +84,10 @@ const TransactionsPage: NextPage = () => {
       let transactions = data[key];
 
       content.push(
-        <div key={key} className="w-fit bg-neutral-600 rounded-md px-3 py-1">
+        <div
+          key={key}
+          className="w-fit bg-neutral-400 text-neutral-900 rounded-md px-3 py-1"
+        >
           {date.toLocaleString("en-AU", options)}
         </div>
       );

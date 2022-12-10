@@ -1,9 +1,13 @@
 import clientPromise from "@/utils/mongodb";
 import { MongoClient, Document, ObjectId } from "mongodb";
-import { Transaction } from "./transactionDomainModels";
+import { SplitTransactionModel, Transaction } from "./transactionDomainModels";
 
 function TransactionsCollection(client: MongoClient) {
   return client.db("Splitty").collection("Transactions");
+}
+
+function SplitTransactionsCollection(client: MongoClient) {
+  return client.db("Splitty").collection("SplitTransactions");
 }
 
 //#region Transactions
@@ -13,22 +17,7 @@ export async function GetAllTransactions() {
 
   const collection = await TransactionsCollection(client).aggregate().toArray();
 
-  const transactions: { [key: string]: Document[] } = {};
-
-  for (let idx in collection) {
-    let trx = collection[idx];
-
-    let key = trx["Date"];
-    let val = transactions[key];
-
-    if (!val) {
-      transactions[key] = [trx];
-    } else {
-      transactions[key].push(trx);
-    }
-  }
-
-  return transactions;
+  return collection;
 }
 
 export async function AddTransactions(transactions: Transaction[]) {
@@ -84,6 +73,20 @@ export async function SplitTransaction(transactionId: string) {
   console.log(matchedCount, modifiedCount, "upsertId:", upsertedId);
 
   return "";
+}
+
+export async function AddSplitTransaction(
+  SplitTransaction: SplitTransactionModel
+) {
+  const client = await clientPromise;
+
+  let res = await SplitTransactionsCollection(client).insertOne(
+    SplitTransaction
+  );
+
+  console.log(res);
+
+  return {};
 }
 
 //#endregion SplitTransactions

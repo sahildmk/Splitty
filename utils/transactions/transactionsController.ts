@@ -5,8 +5,34 @@ import {
 
 const TRANSACTIONS_API_URL = "/api/transactions";
 
-export async function GetSavedTransactions(): Promise<TransactionsByDateResult> {
-  const data: TransactionsByDateResult = await fetch(TRANSACTIONS_API_URL).then(
+export async function GetSavedTransactionsByDate(): Promise<TransactionsByDateResult> {
+  const data: Transaction[] = await fetch(TRANSACTIONS_API_URL).then(
+    async (res) => {
+      return await res.json();
+    }
+  );
+
+  const collection: TransactionsByDateResult = {};
+
+  // Collect transactions by date
+  for (let idx in data) {
+    let trx = data[idx];
+
+    let key = trx["Date"].toString();
+    let val = collection[key];
+
+    if (!val) {
+      collection[key] = [trx];
+    } else {
+      collection[key].push(trx);
+    }
+  }
+
+  return collection;
+}
+
+export async function GetSavedTransactions(): Promise<Transaction[]> {
+  const data: Transaction[] = await fetch(TRANSACTIONS_API_URL).then(
     async (res) => {
       return await res.json();
     }

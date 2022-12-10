@@ -27,7 +27,7 @@ export const WestpacHeaders = [
   "Categories",
 ];
 
-export type SplitTransaction = {
+export type SplitTransactionModel = {
   _id?: ObjectId;
   TransactionId: ObjectId;
   FulfillingTransactionId: ObjectId;

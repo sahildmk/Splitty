@@ -5,32 +5,11 @@ import { useContext, useState } from "react";
 import Modal from "../shared/modal";
 import styles from "./transactionCard.module.css";
 import { ModalContext } from "@/pages/transactions";
+import AmountContainer from "../shared/AmountContainer";
 
 interface TransactionProps {
   transaction: Transaction;
 }
-
-interface AmountContainerProps {
-  totalAmount: Number | undefined;
-  isCredit: Boolean;
-}
-
-const AmountContainer: NextPage<AmountContainerProps> = ({
-  totalAmount,
-  isCredit,
-}) => {
-  return (
-    <span
-      className={
-        isCredit
-          ? "text-emerald-300 bg-emerald-800 rounded-[0.2rem] px-[0.3rem] py-[0.05rem]"
-          : ""
-      }
-    >
-      {isCredit ? "" : "-"}${totalAmount?.toString()}
-    </span>
-  );
-};
 
 const TransactionCard: NextPage<TransactionProps> = ({ transaction }) => {
   const [coppied, setCoppied] = useState(false);
