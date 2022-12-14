@@ -139,7 +139,7 @@ const TransactionsPage: NextPage = () => {
         <link rel="icon" href="/favicon.ico" />
       </Head>
 
-      <main className="m-5 sm:m-10">
+      <main className="grid place-items-center m-5 sm:m-10">
         <h1 className="text-4xl font-bold">Splitty</h1>
         <div className="my-5">
           <h1 className="text-2xl font-bold">Import file:</h1>
