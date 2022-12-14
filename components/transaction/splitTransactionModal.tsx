@@ -1,4 +1,4 @@
-import { SplitTransaction } from "@/utils/transactions/splitTransactionsController";
+import { SplitTransactionAction } from "@/utils/transactions/splitTransactionsController";
 import { Transaction } from "@/utils/transactions/transactionDomainModels";
 import { NextPage } from "next";
 import Button from "../shared/button";
@@ -48,8 +48,7 @@ const SplitTransactionModal: NextPage<SplitTransactionModalProps> = ({
             text="Confirm"
             onClick={async () => {
               if (transaction) {
-                var res = await SplitTransaction(transaction);
-                console.log(res);
+                await SplitTransactionAction(transaction);
 
                 confirmCallback();
                 showModalFn(false);

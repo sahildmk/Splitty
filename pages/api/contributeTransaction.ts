@@ -17,11 +17,13 @@ export default async function handler(
   switch (method) {
     case "POST":
       let splitTransaction: SplitTransactionModel = {
-        FulfillingTransactionId: new ObjectId(body.FulfillingTransactionId),
         TransactionId: new ObjectId(body.TransactionId),
         TotalAmount: Number(body.TotalAmount),
       };
-      response = await AddSplitTransaction(splitTransaction);
+      response = await AddSplitTransaction(
+        body.FulfillingTransactionId,
+        splitTransaction
+      );
       break;
 
     default:

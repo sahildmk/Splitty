@@ -1,5 +1,5 @@
 .transactionCardBase {
-  @apply flex items-center px-6 py-5 hover:scale-[1.03];
+  @apply flex items-center px-4 py-3  sm:px-6 sm:py-5 hover:scale-[1.03];
   @apply transition-all hover:cursor-pointer w-full;
 }
 

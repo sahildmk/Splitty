@@ -7,6 +7,7 @@ import {
   Transaction,
 } from "@/utils/transactions/transactionDomainModels";
 import { GetSavedTransactions } from "@/utils/transactions/transactionsController";
+import { truncate } from "@/utils/utils";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { NextPage } from "next";
 import { ChangeEvent, useState } from "react";
@@ -71,7 +72,7 @@ const ContributeTransactionModal: NextPage<ContributeTransactionModalProps> = ({
                 {!isLoading &&
                   data?.map(
                     (trx, idx) =>
-                      trx.DebitAmount && (
+                      trx.IsSplitTransaction && (
                         <option value={trx._id?.toString()} key={idx}>
                           {truncate(
                             `$${trx.DebitAmount} - ${trx.Description}`,
@@ -119,9 +120,5 @@ const ContributeTransactionModal: NextPage<ContributeTransactionModalProps> = ({
     </Modal>
   );
 };
-
-function truncate(str: String, n: number) {
-  return str.length > n ? str.slice(0, n - 1) + " . . ." : str;
-}
 
 export default ContributeTransactionModal;

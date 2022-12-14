@@ -1,4 +1,4 @@
-import { SplitTransactionModel } from "@/utils/transactions/transactionsRepository";
+import { SplitTransaction } from "@/utils/transactions/transactionsRepository";
 import type { NextApiRequest, NextApiResponse } from "next";
 
 export default async function handler(

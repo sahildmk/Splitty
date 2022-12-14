@@ -5,18 +5,14 @@ import {
 
 const TRANSACTIONS_API_URL = "/api/transactions";
 
-export async function GetSavedTransactionsByDate(): Promise<TransactionsByDateResult> {
-  const data: Transaction[] = await fetch(TRANSACTIONS_API_URL).then(
-    async (res) => {
-      return await res.json();
-    }
-  );
-
+export function GroupTransactionsByDate(
+  transactions: Transaction[]
+): TransactionsByDateResult {
   const collection: TransactionsByDateResult = {};
 
   // Collect transactions by date
-  for (let idx in data) {
-    let trx = data[idx];
+  for (let idx in transactions) {
+    let trx = transactions[idx];
 
     let key = trx["Date"].toString();
     let val = collection[key];
@@ -29,6 +25,16 @@ export async function GetSavedTransactionsByDate(): Promise<TransactionsByDateRe
   }
 
   return collection;
+}
+
+export async function GetSavedTransactionsByDate(): Promise<TransactionsByDateResult> {
+  const data: Transaction[] = await fetch(TRANSACTIONS_API_URL).then(
+    async (res) => {
+      return await res.json();
+    }
+  );
+
+  return GroupTransactionsByDate(data);
 }
 
 export async function GetSavedTransactions(): Promise<Transaction[]> {
@@ -53,8 +59,8 @@ export async function DeleteAllTransactions(): Promise<TransactionsByDateResult>
 
 export async function UploadTransactions(
   transactions: Transaction[]
-): Promise<TransactionsByDateResult> {
-  const data: TransactionsByDateResult = await fetch(TRANSACTIONS_API_URL, {
+): Promise<Transaction[]> {
+  const data: Transaction[] = await fetch(TRANSACTIONS_API_URL, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",

@@ -2,6 +2,7 @@ import { ObjectId } from "mongodb";
 
 export type Transaction = WestpacTransaction & {
   IsSplitTransaction: Boolean;
+  TransactionSplit: SplitTransactionModel[];
 };
 
 export type TransactionsByDateResult = { [key: string]: Transaction[] };
@@ -30,6 +31,5 @@ export const WestpacHeaders = [
 export type SplitTransactionModel = {
   _id?: ObjectId;
   TransactionId: ObjectId;
-  FulfillingTransactionId: ObjectId;
-  TotalAmount: Number;
+  TotalAmount: number;
 };

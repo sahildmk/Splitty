@@ -14,6 +14,7 @@ import {
   GetSavedTransactionsByDate,
   UploadTransactions,
   DeleteAllTransactions,
+  GroupTransactionsByDate,
 } from "@/utils/transactions/transactionsController";
 import {
   WestpacHeaders,
@@ -49,7 +50,7 @@ const TransactionsPage: NextPage = () => {
 
   const uploadTransactionsMut = useMutation(UploadTransactions, {
     onSuccess: (data) => {
-      queryClient.setQueryData(["transactions"], data);
+      queryClient.setQueryData(["transactions"], GroupTransactionsByDate(data));
     },
   });
 
@@ -68,7 +69,7 @@ const TransactionsPage: NextPage = () => {
   const GetTransactionsList = (data: TransactionsByDateResult | undefined) => {
     let content = [];
 
-    if (!data) return <></>;
+    if (isFetching) return <></>;
 
     var options: Intl.DateTimeFormatOptions = {
       weekday: "short",
@@ -92,7 +93,7 @@ const TransactionsPage: NextPage = () => {
         </div>
       );
 
-      transactions.forEach((transaction) => {
+      transactions?.forEach((transaction) => {
         content.push(
           <TransactionCard
             key={transaction._id?.toString()}
@@ -138,7 +139,7 @@ const TransactionsPage: NextPage = () => {
         <link rel="icon" href="/favicon.ico" />
       </Head>
 
-      <main className="m-10">
+      <main className="m-5 sm:m-10">
         <h1 className="text-4xl font-bold">Splitty</h1>
         <div className="my-5">
           <h1 className="text-2xl font-bold">Import file:</h1>
@@ -155,7 +156,7 @@ const TransactionsPage: NextPage = () => {
           </form>
         </div>
 
-        <div className="mb-5 w-1/6">
+        <div className="mb-5 max-w-fit">
           <Button
             text="Delete current transactions"
             style="Outline"
@@ -189,12 +190,7 @@ export default TransactionsPage;
 
 async function HandleUploadFile(
   e: ChangeEvent<HTMLInputElement>,
-  mutation: UseMutationResult<
-    TransactionsByDateResult,
-    unknown,
-    Transaction[],
-    unknown
-  >
+  mutation: UseMutationResult<Transaction[], unknown, Transaction[], unknown>
 ) {
   if (e.target.files && e.target.files.length === 1) {
     let transactions = await ParseCSV<Transaction>(

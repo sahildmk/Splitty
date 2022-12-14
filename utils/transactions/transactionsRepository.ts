@@ -54,12 +54,6 @@ export async function SplitTransaction(transactionId: string) {
 
   console.log("transactionId:", transactionId);
 
-  // var trx = await TransactionsCollection(client).findOne({
-  //   _id: new ObjectId(transactionId),
-  // });
-
-  // console.log(trx);
-
   var { matchedCount, modifiedCount, upsertedId } =
     await TransactionsCollection(client).updateOne(
       { _id: new ObjectId(transactionId) },
@@ -76,15 +70,22 @@ export async function SplitTransaction(transactionId: string) {
 }
 
 export async function AddSplitTransaction(
-  SplitTransaction: SplitTransactionModel
+  transactionId: string,
+  splitTransaction: SplitTransactionModel
 ) {
   const client = await clientPromise;
 
-  let res = await SplitTransactionsCollection(client).insertOne(
-    SplitTransaction
-  );
+  var { matchedCount, modifiedCount, upsertedId } =
+    await TransactionsCollection(client).updateOne(
+      { _id: new ObjectId(transactionId) },
+      {
+        $push: {
+          TransactionSplit: splitTransaction,
+        },
+      }
+    );
 
-  console.log(res);
+  console.log(matchedCount, modifiedCount, "upsertId:", upsertedId);
 
   return {};
 }
