@@ -85,8 +85,6 @@ export async function AddSplitTransaction(
       }
     );
 
-  console.log(matchedCount, modifiedCount, "upsertId:", upsertedId);
-
   return {};
 }
 
