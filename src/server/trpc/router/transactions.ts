@@ -56,13 +56,12 @@ export function GroupTransactionsByDate(
 
     if (!trx) continue;
 
-    const key = trx.date.toString();
-    let val = collection[key];
+    const key = trx.date.toUTCString();
 
-    if (!val) {
-      val = [trx];
+    if (!collection[key]) {
+      collection[key] = [trx];
     } else {
-      val.push(trx);
+      collection[key]?.push(trx);
     }
   }
 

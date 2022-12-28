@@ -4,8 +4,6 @@ import Head from "next/head";
 import type { ChangeEvent } from "react";
 import { createContext, useState } from "react";
 import ParseCSV, { WestpacHeaders } from "@/utils/csv-parser";
-import type { UseMutationResult } from "@tanstack/react-query";
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import TransactionCard from "@/components/transaction/transactionCard";
 import SplitTransactionModal from "@/components/transaction/splitTransactionModal";
 import ContributeTransactionModal from "@/components/transaction/contributeTransactionModal";
@@ -14,7 +12,8 @@ import type { Transaction } from "@prisma/client";
 import type { TransactionsByDateResult } from "@/server/trpc/router/transactions";
 import { trpc } from "@/utils/trpc";
 import { useSession } from "next-auth/react";
-import { Session } from "next-auth";
+import type { Session } from "next-auth";
+import { useQueryClient } from "@tanstack/react-query";
 
 type ModalContextType = { openSplitModal: any; openContributeModal: any };
 
@@ -51,12 +50,6 @@ const TransactionsPage: NextPage = () => {
   //   },
   // });
 
-  // const { isLoading, data, isFetching, refetch } = useQuery(
-  //   ["transactions"],
-  //   GetSavedTransactionsByDate,
-  //   { refetchOnWindowFocus: false }
-  // );
-
   const { data: sessionData } = useSession();
 
   const { data, isFetching } =
@@ -68,6 +61,8 @@ const TransactionsPage: NextPage = () => {
   const uploadTransactionsMut =
     trpc.transactions.uploadTransactions.useMutation({
       onSuccess(data) {
+        console.log(data);
+
         queryClient.setQueryData(
           trpc.transactions.getAllTransactionsByDate.getQueryKey(),
           data
@@ -88,9 +83,7 @@ const TransactionsPage: NextPage = () => {
     };
 
     for (const key in data) {
-      const splitDate = key.split("/").map((v) => parseInt(v));
-
-      const date = new Date(splitDate[2], splitDate[1], splitDate[0]);
+      const date = new Date(key);
 
       const transactions = data[key];
 
@@ -182,9 +175,10 @@ const TransactionsPage: NextPage = () => {
           }}
         >
           <section className="max-w-2xl">
-            {isFetching || isFetching ? (
+            {isFetching && !data ? (
               <>Loading...</>
             ) : (
+              // <>{data[]}</>
               GetTransactionsList(data)
             )}
           </section>
@@ -201,19 +195,20 @@ export default TransactionsPage;
 async function HandleUploadFile(
   e: ChangeEvent<HTMLInputElement>,
   mutation: any,
-  sessionData: Session
+  sessionData: Session | null
 ) {
-  if (e.target.files && e.target.files.length === 1) {
+  if (e.target.files && e.target.files[0] && sessionData) {
     const transactions = await ParseCSV<Transaction>(
       e.target.files[0],
       WestpacHeaders
     );
 
     transactions.forEach((val) => {
-      if (sessionData.user) val.userId = sessionData.user?.id;
+      if (sessionData.user) {
+        val.userId = sessionData.user?.id;
+        val.isSplitTransaction = false;
+      }
     });
-
-    console.log(transactions);
 
     mutation.mutate(transactions);
   }

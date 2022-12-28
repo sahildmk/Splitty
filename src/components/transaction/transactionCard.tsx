@@ -6,7 +6,7 @@ import styles from "./transactionCard.module.css";
 import { ModalContext } from "@/pages/transactions";
 import AmountContainer from "../shared/AmountContainer";
 import { truncate } from "@/utils/utils";
-import { Transaction } from "@prisma/client";
+import type { Transaction } from "@prisma/client";
 
 interface TransactionProps {
   transaction: Transaction;
