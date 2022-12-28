@@ -1,8 +1,10 @@
-import { NextPage } from "next";
-import { createContext, ReactElement } from "react";
+import type { NextPage } from "next";
+import type { ReactElement } from "react";
+
+export type ShowModalFn = (show: boolean) => void;
 
 interface ModalProps {
-  showModalFn: Function;
+  showModalFn: ShowModalFn;
   children: ReactElement;
 }
 
@@ -12,13 +14,13 @@ const Modal: NextPage<ModalProps> = ({ showModalFn, children }) => {
       onClick={() => {
         showModalFn(false);
       }}
-      className="fixed top-0 left-0 w-screen h-screen z-50 bg-opacity-50 bg-black grid place-items-center"
+      className="fixed top-0 left-0 z-50 grid h-screen w-screen place-items-center bg-black bg-opacity-50"
     >
       <div
         onClick={(e) => {
           e.stopPropagation();
         }}
-        className="shadow-lg p-8 rounded-md bg-neutral-700 max-w-lg"
+        className="max-w-lg rounded-md bg-neutral-700 p-8 shadow-lg"
       >
         {children}
       </div>

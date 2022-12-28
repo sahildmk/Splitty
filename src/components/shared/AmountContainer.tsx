@@ -1,8 +1,8 @@
-import { NextPage } from "next";
+import type { NextPage } from "next";
 
 interface AmountContainerProps {
-  totalAmount: Number | undefined;
-  isCredit: Boolean;
+  totalAmount: number | undefined;
+  isCredit: boolean;
 }
 
 const AmountContainer: NextPage<AmountContainerProps> = ({
@@ -13,7 +13,7 @@ const AmountContainer: NextPage<AmountContainerProps> = ({
     <span
       className={
         isCredit
-          ? "text-emerald-300 bg-emerald-800 rounded-[0.2rem] px-[0.3rem] py-[0.05rem]"
+          ? "rounded-[0.2rem] bg-emerald-800 px-[0.3rem] py-[0.05rem] text-emerald-300"
           : ""
       }
     >

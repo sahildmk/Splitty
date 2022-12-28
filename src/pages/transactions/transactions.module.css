@@ -1,0 +1,19 @@
+.loadingContainer {
+  @apply flex justify-center;
+}
+
+.loading {
+  background-color: white;
+  height: 0.25rem;
+  animation: 4s infinite alternate loadingAnimation;
+}
+
+@keyframes loadingAnimation {
+  0% {
+    width: 0;
+  }
+
+  100% {
+    width: 100vw;
+  }
+}

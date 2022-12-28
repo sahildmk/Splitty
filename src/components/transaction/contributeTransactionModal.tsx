@@ -1,24 +1,25 @@
+import { GetAllTransactions } from "@/src/server/db/transactions/transactionsRepository";
+import { trpc } from "@/src/utils/trpc";
 import {
   ContributeTransaction,
   SplitTransactionAction,
 } from "@/utils/transactions/splitTransactionsController";
-import {
-  SplitTransactionModel,
-  Transaction,
-} from "@/utils/transactions/transactionDomainModels";
+import type { Transaction } from "@/utils/transactions/transactionDomainModels";
+import { SplitTransactionModel } from "@/utils/transactions/transactionDomainModels";
 import { GetSavedTransactions } from "@/utils/transactions/transactionsController";
 import { truncate } from "@/utils/utils";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { NextPage } from "next";
-import { ChangeEvent, useState } from "react";
-import AmountContainer from "../shared/AmountContainer";
+import type { NextPage } from "next";
+import { useSession } from "next-auth/react";
+import { useState } from "react";
 import Button from "../shared/button";
+import type { ShowModalFn } from "../shared/modal";
 import Modal from "../shared/modal";
 
 interface ContributeTransactionModalProps {
   transaction?: Transaction;
-  showModalFn: Function;
-  confirmCallback: Function;
+  showModalFn: ShowModalFn;
+  confirmCallback: () => void;
 }
 
 const ContributeTransactionModal: NextPage<ContributeTransactionModalProps> = ({
@@ -27,33 +28,37 @@ const ContributeTransactionModal: NextPage<ContributeTransactionModalProps> = ({
   confirmCallback,
 }) => {
   const [chosenTrx, setChosenTrx] = useState("");
+  const { data: sessionData } = useSession();
 
   const queryClient = useQueryClient();
 
-  const { isLoading, data, isFetching, refetch } = useQuery(
-    ["transactionsList"],
-    GetSavedTransactions,
-    { refetchOnWindowFocus: false }
+  const { data, isFetching } = trpc.transactions.getAllTransactions.useQuery(
+    undefined,
+    {
+      enabled: sessionData?.user !== undefined,
+    }
   );
 
-  const handleConfirmSplitTransaction = (e: ChangeEvent<HTMLSelectElement>) => {
-    alert(e.target.value);
-  };
+  // const { isLoading, data, isFetching, refetch } = useQuery(
+  //   ["transactionsList"],
+  //   GetAllTransactions,
+  //   { refetchOnWindowFocus: false }
+  // );
 
   return (
     <Modal showModalFn={showModalFn}>
       <div>
-        <header className="text-xl font-semibold pb-5">Link Transaction</header>
+        <header className="pb-5 text-xl font-semibold">Link Transaction</header>
         <section className="pb-7">
-          <section className="pb-5 grid gap-2">
+          <section className="grid gap-2 pb-5">
             <h3>Use this transaction to pay off a debit?</h3>
             <p>Select the debit transaction bellow.</p>
           </section>
-          <section className="bg-neutral-800 p-5 rounded-md font-light grid gap-5">
+          <section className="grid gap-5 rounded-md bg-neutral-800 p-5 font-light">
             <p>{transaction?.Description}</p>
             <p>
               Total:
-              <span className="ml-1 font-normal text-neutral-800 bg-neutral-300 rounded-[0.2rem] px-[0.3rem] py-[0.05rem]">
+              <span className="ml-1 rounded-[0.2rem] bg-neutral-300 px-[0.3rem] py-[0.05rem] font-normal text-neutral-800">
                 ${transaction?.CreditAmount}
               </span>
             </p>
@@ -65,17 +70,17 @@ const ContributeTransactionModal: NextPage<ContributeTransactionModalProps> = ({
                 onChange={(event) => setTransactionInput(event.target.value)}
               /> */}
               <select
-                className="px-3 py-2 rounded-md"
+                className="rounded-md px-3 py-2"
                 onChange={(e) => setChosenTrx(e.target.value)}
               >
                 <option value={undefined}>Choose a transaction</option>
-                {!isLoading &&
+                {!isFetching &&
                   data?.map(
                     (trx, idx) =>
-                      trx.IsSplitTransaction && (
-                        <option value={trx._id?.toString()} key={idx}>
+                      trx.isSplitTransaction && (
+                        <option value={trx.id?.toString()} key={idx}>
                           {truncate(
-                            `$${trx.DebitAmount} - ${trx.Description}`,
+                            `$${trx.debitAmount} - ${trx.description}`,
                             30
                           )}
                         </option>
@@ -98,13 +103,13 @@ const ContributeTransactionModal: NextPage<ContributeTransactionModalProps> = ({
             text="Confirm"
             onClick={async () => {
               if (transaction && chosenTrx) {
-                let splitTransaction = {
+                const splitTransaction = {
                   FulfillingTransactionId: chosenTrx!,
                   TransactionId: transaction._id!,
                   TotalAmount: transaction.CreditAmount!,
                 };
 
-                let res = await ContributeTransaction(splitTransaction);
+                const res = await ContributeTransaction(splitTransaction);
 
                 console.log(res);
 

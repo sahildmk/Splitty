@@ -1,12 +1,12 @@
-import { NextPage } from "next";
+import type { NextPage } from "next";
 import { ClipboardIcon, CheckIcon } from "@heroicons/react/24/outline";
-import { Transaction } from "@/utils/transactions/transactionDomainModels";
 import { useContext, useState } from "react";
 import Modal from "../shared/modal";
 import styles from "./transactionCard.module.css";
 import { ModalContext } from "@/pages/transactions";
 import AmountContainer from "../shared/AmountContainer";
 import { truncate } from "@/utils/utils";
+import { Transaction } from "@prisma/client";
 
 interface TransactionProps {
   transaction: Transaction;
@@ -16,21 +16,21 @@ const TransactionCard: NextPage<TransactionProps> = ({ transaction }) => {
   const [coppied, setCoppied] = useState(false);
   const modalContext = useContext(ModalContext);
 
-  let totalReceived =
+  const totalReceived =
     transaction.TransactionSplit?.reduce((acc, curr) => {
       return acc + curr.TotalAmount;
     }, 0) ?? 0;
 
-  let totalPercent = transaction.DebitAmount
-    ? (totalReceived * 100) / transaction.DebitAmount!
+  const totalPercent = transaction.debitAmount
+    ? (totalReceived * 100) / transaction.debitAmount
     : 0;
 
   const [percentFilled, setPercentFilled] = useState(totalPercent);
 
-  const isCredit = transaction.CreditAmount?.toString() !== "";
+  const isCredit = transaction.creditAmount?.toString() !== "";
 
   function CopyHandler() {
-    navigator.clipboard.writeText(transaction._id?.toString()!);
+    navigator.clipboard.writeText(transaction.id?.toString()!);
     setCoppied(true);
 
     new Promise((resolve) => {
@@ -41,50 +41,50 @@ const TransactionCard: NextPage<TransactionProps> = ({ transaction }) => {
   }
 
   return (
-    <div className="flex items-center my-4 sm:my-6 relative text-sm sm:text-base">
+    <div className="relative my-4 flex items-center text-sm sm:my-6 sm:text-base">
       <div
         className={styles.transactionCardDefault}
         onClick={() => {
-          if (transaction.CreditAmount)
+          if (transaction.creditAmount)
             modalContext.openContributeModal(transaction);
         }}
       >
-        <div className="mr-2 font-light z-20">{transaction.Description}</div>
-        <div className="ml-auto z-20">
+        <div className="z-20 mr-2 font-light">{transaction.description}</div>
+        <div className="z-20 ml-auto">
           <AmountContainer
-            totalAmount={transaction.CreditAmount || transaction.DebitAmount}
+            totalAmount={transaction.creditAmount || transaction.debitAmount}
             isCredit={isCredit}
           />
-          {transaction.IsSplitTransaction && (
+          {transaction.isSplitTransaction && (
             <span>
               {" "}
-              (${(transaction.DebitAmount! - totalReceived)?.toFixed(2)} left)
+              (${(transaction.debitAmount - totalReceived)?.toFixed(2)} left)
             </span>
           )}
         </div>
-        <div className="grid place-items-center z-20">
+        <div className="z-20 grid place-items-center">
           {coppied ? (
             <CheckIcon className="h-5 pl-4 text-green-400" />
           ) : (
             <ClipboardIcon
-              className="h-5 pl-4 hover:text-neutral-400 transition-all"
+              className="h-5 pl-4 transition-all hover:text-neutral-400"
               onClick={CopyHandler}
             />
           )}
         </div>
-        {transaction.DebitAmount && (
+        {transaction.debitAmount && (
           <div
             style={{
-              width: `${transaction.IsSplitTransaction ? percentFilled : 0}%`,
+              width: `${transaction.isSplitTransaction ? percentFilled : 0}%`,
             }}
-            className={`absolute left-0 rounded-md bg-purple-700 h-full z-10`}
+            className={`absolute left-0 z-10 h-full rounded-md bg-purple-700`}
           ></div>
         )}
-        <div className="absolute left-0 rounded-md bg-neutral-700 w-full h-full"></div>
+        <div className="absolute left-0 h-full w-full rounded-md bg-neutral-700"></div>
       </div>
-      {transaction.DebitAmount && !transaction.IsSplitTransaction && (
+      {transaction.debitAmount && !transaction.isSplitTransaction && (
         <button
-          className="bg-purple-800 ml-3 sm:ml-4 px-2 py-3 sm:px-6 sm:py-5 hover:scale-[1.03] transition-all rounded-md hover:cursor-pointer"
+          className="ml-3 rounded-md bg-purple-800 px-2 py-3 transition-all hover:scale-[1.03] hover:cursor-pointer sm:ml-4 sm:px-6 sm:py-5"
           onClick={() => {
             modalContext.openSplitModal(transaction);
           }}

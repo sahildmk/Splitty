@@ -1,13 +1,14 @@
 import { SplitTransactionAction } from "@/utils/transactions/splitTransactionsController";
-import { Transaction } from "@/utils/transactions/transactionDomainModels";
-import { NextPage } from "next";
+import type { Transaction } from "@/utils/transactions/transactionDomainModels";
+import type { NextPage } from "next";
 import Button from "../shared/button";
+import type { ShowModalFn } from "../shared/modal";
 import Modal from "../shared/modal";
 
 interface SplitTransactionModalProps {
   transaction?: Transaction;
-  showModalFn: Function;
-  confirmCallback: Function;
+  showModalFn: ShowModalFn;
+  confirmCallback: () => void;
 }
 
 const SplitTransactionModal: NextPage<SplitTransactionModalProps> = ({
@@ -15,21 +16,19 @@ const SplitTransactionModal: NextPage<SplitTransactionModalProps> = ({
   showModalFn,
   confirmCallback,
 }) => {
-  const handleConfirmSplitTransaction = () => {};
-
   return (
     <Modal showModalFn={showModalFn}>
       <div>
-        <header className="text-xl font-semibold pb-5">
+        <header className="pb-5 text-xl font-semibold">
           Split Transaction
         </header>
         <section className="pb-7">
           <h3 className=" pb-5">Do you want to split this transaction?</h3>
-          <section className="bg-neutral-800 p-5 rounded-md font-light">
+          <section className="rounded-md bg-neutral-800 p-5 font-light">
             <p className=" pb-4">{transaction?.Description}</p>
             <p className="">
               Total:
-              <span className="ml-1 font-normal text-neutral-800 bg-neutral-300 rounded-[0.2rem] px-[0.3rem] py-[0.05rem]">
+              <span className="ml-1 rounded-[0.2rem] bg-neutral-300 px-[0.3rem] py-[0.05rem] font-normal text-neutral-800">
                 ${transaction?.DebitAmount}
               </span>
             </p>

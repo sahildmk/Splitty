@@ -24,7 +24,7 @@ model Example {
 // Necessary for Next auth
 model Account {
   id                Int     @id @default(autoincrement())
-  userId            Int
+  userId            String
   type              String
   provider          String
   providerAccountId String
@@ -44,7 +44,7 @@ model Account {
 model Session {
   id           String   @id @default(cuid())
   sessionToken String   @unique
-  userId       Int
+  userId       String
   expires      DateTime
   user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 
@@ -52,13 +52,15 @@ model Session {
 }
 
 model User {
-  id            Int       @id @default(autoincrement())
-  name          String?
-  email         String?   @unique
-  emailVerified DateTime?
-  image         String?
-  accounts      Account[]
-  sessions      Session[]
+  id               String                @id @default(cuid())
+  name             String?
+  email            String?            @unique
+  emailVerified    DateTime?
+  image            String?
+  accounts         Account[]
+  sessions         Session[]
+  Transaction      Transaction[]
+  SplitTransaction SplitTransaction[]
 }
 
 model VerificationToken {
@@ -71,18 +73,25 @@ model VerificationToken {
 
 model Transaction {
   id                 Int                @id @default(autoincrement())
+  userId             String
   date               DateTime           @db.DateTime()
   description        String             @db.Text
-  DebitAmount        Decimal?           @db.Decimal()
-  CreditAmount       Decimal?           @db.Decimal()
-  IsSplitTransaction Boolean
-  SplitTransaction   SplitTransaction[]
+  debitAmount        Decimal?           @db.Decimal()
+  creditAmount       Decimal?           @db.Decimal()
+  isSplitTransaction Boolean
+  splitTransaction   SplitTransaction[]
+  user               User               @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
 }
 
 model SplitTransaction {
   id            Int         @id @default(autoincrement())
+  userId        String
   transactionId Int
   transaction   Transaction @relation(fields: [transactionId], references: [id], onDelete: Cascade)
+  user          User        @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@index([transactionId])
+  @@index([userId])
 }
